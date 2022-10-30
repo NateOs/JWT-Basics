@@ -5,6 +5,7 @@
 const jwt = require("jsonwebtoken");
 const CustomAPIError = require("../errors/custom-error");
 
+// LOGIN ROUTE
 const login = async (req, res) => {
   const { username, password } = req.body;
 
@@ -24,27 +25,18 @@ const login = async (req, res) => {
   res.status(200).json({ msg: "user created", token });
 };
 
+/* for this route authentication process is added to the logic, but in practice, it shd
+be added to a middleware and applied to all protected routes, DRY */
+// DASHBOARD ROUTE
 const dashboard = async (req, res) => {
-  const bearerString = req.headers.authorization;
+  console.log(req.user);
+  const luckyNumber = Math.floor(Math.random() * 100);
 
-  if (!bearerString || !bearerString.startsWith("Bearer ")) {
-    throw new CustomAPIError("Unauthorized, no user token", 401);
-  }
+  res.status(200).json({
+    msg: `Hello, ${req.user.username}`,
+    secret: `Here is your authorized data, your lucky number is ${luckyNumber}`,
+  });
 
-  const tokenString = bearerString.split(" ")[1];
-
-  try {
-    const decoded = jwt.verify(tokenString, process.env.JWT_SECRET);
-
-    const luckyNumber = Math.floor(Math.random() * 100);
-
-    res.status(200).json({
-      msg: `Hello, John Doe`,
-      secret: `Here is your authorized data, your lucky number is ${luckyNumber}`,
-    });
-  } catch (error) {
-    throw new CustomAPIError("Unauthorized to access route", 400);
-  }
   // console.log(tokenString);
   // console.log(req.headers);
 };
