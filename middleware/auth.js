@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
-const CustomAPIError = require("../errors/custom-error");
+const { UnauthenticatedError } = require("../errors");
 
 const authenticationMiddleware = async (req, res, next) => {
   const bearerString = req.headers.authorization;
   console.log(bearerString);
   if (!bearerString || !bearerString.startsWith("Bearer ")) {
-    throw new CustomAPIError("Unauthorized, no user token", 401);
+    throw new UnauthenticatedError("No token provided");
   }
 
   const tokenString = bearerString.split(" ")[1];
@@ -17,7 +17,7 @@ const authenticationMiddleware = async (req, res, next) => {
     req.user = { id, username }; // creating a user object on request that is accessible from the dashboard endpoint (next)
     next();
   } catch (error) {
-    throw new CustomAPIError("Unauthorized to access route", 400);
+    throw new UnauthenticatedError("Unauthorized to access route");
   }
 };
 

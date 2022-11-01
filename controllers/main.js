@@ -3,14 +3,14 @@
 // send back jwt token
 // setup authentication such that user with token gains access
 const jwt = require("jsonwebtoken");
-const CustomAPIError = require("../errors/custom-error");
+const { BadRequestError } = require("../errors");
 
 // LOGIN ROUTE
 const login = async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    throw new CustomAPIError("Wrong email or password", 400);
+    throw new BadRequestError("Wrong email or password");
   }
 
   // generating fake id, this is usually available from db after account creation
